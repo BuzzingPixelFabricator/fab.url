@@ -82,4 +82,4 @@ window[window.FABNAMESPACE] = window.window[window.FABNAMESPACE] || {};
             return hash || null;
         }
     };
-})(window.FAB);
+})(window[window.FABNAMESPACE]);
