@@ -13,31 +13,47 @@ window[window.FABNAMESPACE] = window.window[window.FABNAMESPACE] || {};
 (function(F) {
     'use strict';
 
-    // Set up some variables
     var split;
     var queryObject = {};
     var queryArray = [];
+    var savedQueryString;
+    var queryString;
+    var savedHash;
+    var hash;
 
-    // Get query string
-    var queryString = window.location.search;
-    queryString = queryString.split('?')[1];
+    function parse() {
+        // Get query string
+        queryString = savedQueryString = window.location.search;
+        queryString = queryString.split('?')[1];
 
-    // Get hash
-    var hash = window.location.hash;
-    hash = hash.split('#')[1];
+        // Get hash
+        hash = savedHash = window.location.hash;
+        hash = hash.split('#')[1];
 
-    // If there is a query string
-    if (queryString) {
-        // Split on the ampersand seperator
-        queryArray = queryString.split('&');
+        queryObject = {};
+        queryArray = [];
 
-        // Iterate over number of items in qs
-        for (var i = 0; i < queryArray.length; i++) {
-            // Split the item
-            split = queryArray[i].split('=');
+        // If there is a query string
+        if (queryString) {
+            // Split on the ampersand seperator
+            queryArray = queryString.split('&');
 
-            // Add the item to the qObj
-            queryObject[split[0]] = split[1];
+            // Iterate over number of items in qs
+            for (var i = 0; i < queryArray.length; i++) {
+                // Split the item
+                split = queryArray[i].split('=');
+
+                // Add the item to the qObj
+                queryObject[split[0]] = split[1];
+            }
+        }
+    }
+
+    function checkIfParsingNeeded() {
+        if (window.location.search !== savedQueryString ||
+            window.location.hash !== savedHash
+        ) {
+            parse();
         }
     }
 
@@ -49,6 +65,7 @@ window[window.FABNAMESPACE] = window.window[window.FABNAMESPACE] || {};
          * Get query string
          */
         getQueryString: function() {
+            checkIfParsingNeeded();
             return queryString;
         },
 
@@ -56,6 +73,7 @@ window[window.FABNAMESPACE] = window.window[window.FABNAMESPACE] || {};
          * Get query array
          */
         getQueryArray: function() {
+            checkIfParsingNeeded();
             return queryArray;
         },
 
@@ -63,15 +81,16 @@ window[window.FABNAMESPACE] = window.window[window.FABNAMESPACE] || {};
          * Get query object
          */
         getQueryObject: function() {
+            checkIfParsingNeeded();
             return queryObject;
         },
 
         /**
          * Get specific query item
-         *
          * @param {String} key
          */
         getQueryItem: function(key) {
+            checkIfParsingNeeded();
             return queryObject[key] || null;
         },
 
@@ -79,6 +98,7 @@ window[window.FABNAMESPACE] = window.window[window.FABNAMESPACE] || {};
          * Get hash
          */
         getHash: function() {
+            checkIfParsingNeeded();
             return hash || null;
         }
     };
